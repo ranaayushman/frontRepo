@@ -7,7 +7,7 @@ export default function Explore() {
     <section className="w-full px-6 md:px-16 py-16 space-y-16">
       {/* Features Section */}
       <div>
-        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
           Explore Our Features
         </h2>
         <p className="text-gray-500 max-w-2xl mb-8">
@@ -41,7 +41,7 @@ export default function Explore() {
 
       {/* Testimonials Section */}
       <div>
-        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
           What People Are Saying
         </h2>
         <p className="text-gray-500 max-w-2xl mb-8">
