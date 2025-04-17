@@ -17,6 +17,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 // Define the form data structure
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 interface ContactFormData {
   name: string;
   email: string;
@@ -53,12 +55,21 @@ export function AdmissionForm({
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    // Simulate API call
     try {
-      // Replace this with your actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch(`${BASE_URL}/contacts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-      console.log("Form submitted:", data);
+      if (!response.ok) {
+        throw new Error("Failed to submit application");
+      }
+
+      const result = await response.json();
+      console.log("Form submitted:", result);
 
       setSubmitStatus("success");
       form.reset();
@@ -67,6 +78,7 @@ export function AdmissionForm({
         setSubmitStatus(null);
       }, 1500);
     } catch (error) {
+      console.error(error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
