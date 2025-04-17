@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 
 // Define the form data structure
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+// const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 interface ContactFormData {
   name: string;
   email: string;
@@ -56,7 +56,7 @@ export function AdmissionForm({
     setSubmitStatus(null);
 
     try {
-      const response = await fetch(`${BASE_URL}/contacts`, {
+      const response = await fetch("/api/v1/contacts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
