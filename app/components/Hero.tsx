@@ -1,47 +1,66 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { AdmissionForm } from "./Contact"; // Adjust the import path as needed
+import { Button } from "@/components/ui/button"; 
+import Link from "next/link";
 
-export default function Hero() {
-  const [isFormOpen, setIsFormOpen] = useState(false);
-
+const Hero = () => {
   return (
-    <>
-      <section className="w-full h-screen flex flex-col md:flex-row">
-        {/* Left content */}
-        <div className="bg-black text-white flex flex-col justify-center p-10 md:w-1/2 w-full">
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
-            Get Direct Admission <br />
-            in Your Dream College <br />– 2025 Admissions Now Open!
-          </h1>
-          <p className="text-lg text-gray-300 mb-8">
-            Apply now for direct admissions in top private colleges across India
-            without entrance exams!
-          </p>
-          <Button
-            className="w-1/2 text-base font-semibold bg-white text-black h-12 hover:bg-gray-300 cursor-pointer"
-            onClick={() => setIsFormOpen(true)}
-          >
-            Apply Now
-          </Button>
-        </div>
+    <section className="relative w-full h-screen overflow-hidden">
+      {/* Background Image */}
+      <Image
+        src="/img/hit.png" 
+        alt="Haldia Institute of Technology"
+        fill
+        className="object-cover"
+      />
 
-        {/* Right image */}
-        <div className="relative md:w-1/2 w-full h-[300px] md:h-full">
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/30" />
+
+      {/* Content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+        {/* Logo */}
+        <div className="mb-6">
           <Image
-            src="/img/hero.png"
-            alt="Students walking to college"
-            fill
-            className="object-cover"
+            src="/img/logo.svg" 
+            alt="HIT Logo"
+            width={420}
+            height={220}
+            className="mx-auto"
           />
         </div>
-      </section>
 
-      {/* Admission Form Dialog */}
-      <AdmissionForm isOpen={isFormOpen} setIsOpen={setIsFormOpen} />
-    </>
+        {/* Buttons */}
+        <div className="flex flex-col gap-4">
+          <Link href="/apply">
+            <Button className="flex justify-between bg-yellow-500 w-52 hover:bg-[#C28C19AD] text-black px-8 py-4 text-lg rounded-full">
+              APPLY NOW
+              <Image
+                src={"/img/arrow.svg"}
+                alt="arrow"
+                width={20}
+                height={20}
+                className="mr-2"
+              />  
+            </Button>
+          </Link>
+          <Link href="/enquiry">
+            <Button className="flex justify-centre bg-yellow-500 w-52 hover:bg-[#C28C19AD] text-black px-8 py-4 text-lg rounded-full">
+              ENQUIRY NOW
+              <Image
+                src={"/img/arrow.svg"}
+                alt="arrow"
+                width={20}
+                height={20}
+                className="mr-2"
+              />
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </section>
   );
-}
+};
+
+export default Hero;
