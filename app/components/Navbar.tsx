@@ -1,8 +1,11 @@
 "use client";
+
 import React, { useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -11,8 +14,6 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-[#FAF9F6] py-4 px-4 md:px-6 shadow-sm relative">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo or Brand Name could go here */}
-
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6 lg:space-x-12">
           <a
@@ -41,14 +42,40 @@ const Navbar: React.FC = () => {
           </a>
         </div>
 
-        {/* Apply Now Button - Shown on all screens */}
-        <div className="hidden sm:block">
+        {/* Right Actions */}
+        <div className="flex items-center space-x-4">
           <a
             href="/apply"
-            className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 lg:py-3 lg:px-6 rounded-full transition-colors"
+            className="hidden sm:block bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 lg:py-3 lg:px-6 rounded-full transition-colors"
           >
             Apply Now
           </a>
+
+          {status !== "loading" &&
+            (session ? (
+              <div className="flex items-center space-x-2">
+                {session.user?.image && (
+                  <img
+                    src={session.user.image}
+                    alt="User"
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
+                <button
+                  onClick={() => signOut()}
+                  className="text-sm font-semibold hover:text-amber-600"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => signIn("google")}
+                className="text-sm font-semibold hover:text-amber-600"
+              >
+                Login
+              </button>
+            ))}
         </div>
 
         {/* Mobile Menu Button */}
@@ -119,14 +146,33 @@ const Navbar: React.FC = () => {
             >
               Blog
             </a>
-            <div className="px-4 py-3">
-              <a
-                href="/apply"
-                className="block sm:hidden w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-full transition-colors"
-              >
-                Apply Now
-              </a>
-            </div>
+            <a
+              href="/apply"
+              className="block sm:hidden w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-full transition-colors mt-2"
+            >
+              Apply Now
+            </a>
+
+            {/* Login / Logout */}
+            {status !== "loading" && (
+              <div className="px-4 py-3">
+                {session ? (
+                  <button
+                    onClick={() => signOut()}
+                    className="w-full text-left text-black font-bold hover:bg-gray-100 py-2"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => signIn("google")}
+                    className="w-full text-left text-black font-bold hover:bg-gray-100 py-2"
+                  >
+                    Login with Google
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
