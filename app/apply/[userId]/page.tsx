@@ -176,7 +176,7 @@ const ApplyPage = () => {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600" disabled={loading}>
               {loading ? "Submitting..." : "Submit Application"}
             </Button>
           </form>

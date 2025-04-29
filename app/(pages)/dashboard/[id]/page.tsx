@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -24,27 +23,12 @@ const DashboardPage = () => {
   const router = useRouter();
   const userId = params.id;
   const [loading, setLoading] = useState(true);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [loadingApps, setLoadingApps] = useState(true);
 
-  const applications = [
-    {
-      id: 1,
-      program: "Summer Internship",
-      status: "In Review",
-      date: "2025-03-12",
-    },
-    {
-      id: 2,
-      program: "Graduate Program",
-      status: "Pending",
-      date: "2025-04-01",
-    },
-  ];
   const applyButton = () => {
     if (status === "authenticated" && session?.user?.id) {
       router.push(`/apply/${session.user.id}`);
-    } else if (status === "authenticated" && !session?.user?.id) {
-      console.error("User authenticated but no ID available");
-      router.push("/dashboard");
     } else {
       signIn("google");
     }
@@ -53,19 +37,29 @@ const DashboardPage = () => {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/");
-      return;
-    }
-
-    if (status === "authenticated" && session?.user?.id) {
-      if (session.user.id !== userId) {
-        router.push("/");
-      } else {
-        setTimeout(() => {
+    } else if (status === "authenticated" && session?.user?.id !== userId) {
+      router.push("/");
+    } else if (status === "authenticated" && session?.user?.id === userId) {
+      const fetchApplications = async () => {
+        try {
+          const res = await fetch(`/api/v1/application/${userId}`);
+          const data = await res.json();
+          if (data.success && data.data) {
+            setApplications(data.data);
+          } else {
+            setApplications([]);
+          }
+        } catch (error) {
+          console.error("Failed to fetch applications:", error);
+          setApplications([]);
+        } finally {
           setLoading(false);
-        }, 1000);
-      }
+          setLoadingApps(false);
+        }
+      };
+      fetchApplications();
     }
-  }, [status, session, userId, router]);
+  }, [status, session, userId]);
 
   const getInitials = () => {
     if (session?.user?.name) {
@@ -77,6 +71,34 @@ const DashboardPage = () => {
         .substring(0, 2);
     }
     return "U";
+  };
+
+  // Get application status based on certain fields
+  interface Application {
+    _id: string;
+    name?: string;
+    email?: string;
+    phoneNumber?: string;
+    branch?: string;
+    class12marks?: number;
+    aadharCardURL?: string;
+    class12MarkSheetURL?: string;
+  }
+
+  type ApplicationStatus = "Pending" | "In Review" | "Completed";
+
+  const getApplicationStatus = (app: Application | null): ApplicationStatus => {
+    if (!app) return "Pending";
+    if (app.aadharCardURL && app.class12MarkSheetURL) return "Completed";
+    if (app.class12marks) return "In Review";
+    return "Pending";
+  };
+
+  // Format the date - assuming _id contains MongoDB ObjectId with timestamp
+  const getApplicationDate = (id: string) => {
+    // Extract timestamp from MongoDB ObjectId
+    const timestamp = parseInt(id.substring(0, 8), 16) * 1000;
+    return new Date(timestamp).toLocaleDateString();
   };
 
   if (status === "loading" || loading) {
@@ -135,42 +157,70 @@ const DashboardPage = () => {
               <CardHeader>
                 <CardTitle>Your Applications</CardTitle>
                 <CardDescription>
-                  Track the status of your current applications
+                  Track the status of your current applications.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {applications.length > 0 ? (
+                  {loadingApps ? (
+                    [...Array(2)].map((_, i) => (
+                      <Skeleton
+                        key={i}
+                        className="h-[120px] w-full rounded-lg"
+                      />
+                    ))
+                  ) : applications.length > 0 ? (
                     applications.map((app) => (
-                      <Card key={app.id}>
+                      <Card key={app._id}>
                         <CardHeader className="py-3">
                           <div className="flex items-center justify-between">
                             <CardTitle className="text-lg">
-                              {app.program}
+                              {app.branch || "No Branch"} Program
                             </CardTitle>
                             <Badge
                               variant={
-                                app.status === "In Review"
+                                getApplicationStatus(app) === "In Review"
                                   ? "outline"
-                                  : app.status === "Pending"
+                                  : getApplicationStatus(app) === "Pending"
                                   ? "secondary"
-                                  : app.status === "Accepted"
+                                  : getApplicationStatus(app) === "Completed"
                                   ? "default"
                                   : "destructive"
                               }
                             >
-                              {app.status}
+                              {getApplicationStatus(app)}
                             </Badge>
                           </div>
                         </CardHeader>
                         <CardContent className="pb-3 pt-0">
-                          <p className="text-sm text-muted-foreground">
-                            Application Date:{" "}
-                            {new Date(app.date).toLocaleDateString()}
-                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <p className="text-sm text-muted-foreground">
+                              Name: {app.name}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Email: {app.email}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Phone: {app.phoneNumber}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Applied on: {getApplicationDate(app._id)}
+                            </p>
+                            {app.class12marks && (
+                              <p className="text-sm text-muted-foreground">
+                                Class 12 Marks: {app.class12marks}
+                              </p>
+                            )}
+                          </div>
                         </CardContent>
                         <CardFooter className="pt-0">
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              router.push(`/application-details/${app._id}`)
+                            }
+                          >
                             View Details
                           </Button>
                         </CardFooter>
@@ -183,9 +233,8 @@ const DashboardPage = () => {
                       </p>
                     </div>
                   )}
-                  {/* Always show the Start New Application button */}
                   <div className="flex justify-center pt-4">
-                    <Button onClick={applyButton} >Start New Application</Button>
+                    <Button onClick={applyButton}>Start New Application</Button>
                   </div>
                 </div>
               </CardContent>

@@ -1,10 +1,20 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { DefaultSession } from "next-auth";
 
-const handler = NextAuth({
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user?: {
+      id?: string;
+    } & DefaultSession["user"];
+  }
+}
+
+// Define and export authOptions
+export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
@@ -14,7 +24,6 @@ const handler = NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
-      // Get the user from MongoDB using the email
       if (session.user?.email) {
         const client = await clientPromise;
         const db = client.db();
@@ -22,7 +31,6 @@ const handler = NextAuth({
           .collection("users")
           .findOne({ email: session.user.email });
 
-        // Add the MongoDB _id to the session
         if (user) {
           session.user.id = user._id.toString();
         }
@@ -34,19 +42,8 @@ const handler = NextAuth({
   session: {
     strategy: "jwt",
   },
-});
+};
 
-// You may need to extend the Session type to include the id field
-declare module "next-auth" {
-  interface Session {
-    user: {
-      _id: string;
-      id?: string;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-    };
-  }
-}
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
