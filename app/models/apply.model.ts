@@ -1,7 +1,16 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
 const applySchema = new Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: false,
+  },
   name: {
+    type: String,
+    required: true,
+  },
+  guardianNumber: {
     type: String,
     required: true,
   },
@@ -21,7 +30,7 @@ const applySchema = new Schema({
     type: String,
     default: null,
   },
-  class12MarkSheetURL: {
+  class12marks: {
     type: String,
     default: null,
   },

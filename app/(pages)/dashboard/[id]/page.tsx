@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import {
   Card,
@@ -39,20 +39,27 @@ const DashboardPage = () => {
       date: "2025-04-01",
     },
   ];
+  const applyButton = () => {
+    if (status === "authenticated" && session?.user?.id) {
+      router.push(`/apply/${session.user.id}`);
+    } else if (status === "authenticated" && !session?.user?.id) {
+      console.error("User authenticated but no ID available");
+      router.push("/dashboard");
+    } else {
+      signIn("google");
+    }
+  };
 
   useEffect(() => {
-    // Check if user is authenticated
     if (status === "unauthenticated") {
-      router.push("/"); // Redirect to home if not logged in
+      router.push("/");
       return;
     }
 
-    // Check if user is trying to access their own dashboard
     if (status === "authenticated" && session?.user?.id) {
       if (session.user.id !== userId) {
         router.push("/");
       } else {
-        // Simulate loading data
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -60,7 +67,6 @@ const DashboardPage = () => {
     }
   }, [status, session, userId, router]);
 
-  // Get user initials for avatar fallback
   const getInitials = () => {
     if (session?.user?.name) {
       return session.user.name
@@ -73,7 +79,6 @@ const DashboardPage = () => {
     return "U";
   };
 
-  // Loading state
   if (status === "loading" || loading) {
     return (
       <div className="bg-[#FAF9F6] container mx-auto px-4 py-8">
@@ -100,7 +105,7 @@ const DashboardPage = () => {
 
   return (
     <section className="bg-[#FAF9F6]">
-      <div className=" container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8">
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
             <Avatar className="h-12 w-12">
@@ -134,9 +139,9 @@ const DashboardPage = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {applications.length > 0 ? (
-                  <div className="space-y-4">
-                    {applications.map((app) => (
+                <div className="space-y-4">
+                  {applications.length > 0 ? (
+                    applications.map((app) => (
                       <Card key={app.id}>
                         <CardHeader className="py-3">
                           <div className="flex items-center justify-between">
@@ -170,16 +175,19 @@ const DashboardPage = () => {
                           </Button>
                         </CardFooter>
                       </Card>
-                    ))}
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8">
+                      <p className="text-muted-foreground mb-4">
+                        You haven't submitted any applications yet
+                      </p>
+                    </div>
+                  )}
+                  {/* Always show the Start New Application button */}
+                  <div className="flex justify-center pt-4">
+                    <Button onClick={applyButton} >Start New Application</Button>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-8">
-                    <p className="text-muted-foreground mb-4">
-                      You haven't submitted any applications yet
-                    </p>
-                    <Button>Start New Application</Button>
-                  </div>
-                )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

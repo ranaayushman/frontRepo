@@ -1,46 +1,83 @@
 import { NextResponse } from "next/server";
-import  Apply  from "@/app/models/apply.model";
+import Apply from "@/app/models/apply.model";
 import { connectDB } from "@/lib/db";
 
-await connectDB();
-
-// GET all applications
-export async function GET() {
-  try {
-    const applications = await Apply.find();
-    return NextResponse.json(applications, { status: 200 });
-  } catch (err) {
-    console.error("Error fetching applications:", (err as Error).message);
-    return new NextResponse("Server error", { status: 500 });
-  }
-}
-// POST a new application
+// POST - Create new application
 export async function POST(req: Request) {
   try {
+    await connectDB();
+
+    const body = await req.json();
     const {
+      userId,
       name,
+      guardianNumber,
       email,
       phoneNumber,
       branch,
-      aadharCardURL,
-      class12MarkSheetURL,
+      class12marks,
       address,
-    } = await req.json();
+    } = body;
 
     const newApplication = new Apply({
+      userId: userId || undefined,
       name,
+      guardianNumber,
       email,
       phoneNumber,
       branch,
-      aadharCardURL,
-      class12MarkSheetURL,
+      class12marks,
       address,
     });
 
     await newApplication.save();
-    return NextResponse.json(newApplication, { status: 201 });
-  } catch (err) {
-    console.error("Error posting new application:", (err as Error).message);
-    return new NextResponse("Server error", { status: 500 });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Application submitted successfully",
+        data: {
+          id: newApplication._id,
+        },
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Application submission error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// GET - Fetch all applications (for admin)
+export async function GET() {
+  try {
+    await connectDB();
+
+    const applications = await Apply.find().sort({ createdAt: -1 });
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: applications,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+      { status: 500 }
+    );
   }
 }
