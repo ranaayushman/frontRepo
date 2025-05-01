@@ -48,10 +48,10 @@ export default function AboutPage() {
         </div>
 
         <div className="bg-[#140087] text-white rounded-xl p-6 text-center shadow-md">
-          <h2 className="text-2xl font-bold mb-2">We’re Here to Help</h2>
+          <h2 className="text-2xl font-bold mb-2">We&apos;re Here to Help</h2>
           <p className="mb-4">
             Whether you&apos;re confused about which college to choose, unsure about
-            your eligibility, or simply need expert guidance — we’re here for
+            your eligibility, or simply need expert guidance — we&apos;re here for
             you.
           </p>
           <Link href={"/"}>
