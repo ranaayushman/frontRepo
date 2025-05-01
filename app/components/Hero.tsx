@@ -19,62 +19,42 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full h-screen">
       {/* Background Image */}
-      <Image
-        src="/img/hit.png"
-        alt="Haldia Institute of Technology"
-        fill
-        className="object-cover"
-      />
+      <div className="absolute inset-0 w-full h-full">
+        <Image
+          src="/img/herohit.png"
+          alt="College campus"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/30" />
+      {/* Gradient Overlay */}
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 10%, rgba(255,255,255,0) 20%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.8) 90%, rgba(255,255,255,1) 100%)",
+        }}
+      ></div>
 
-      {/* Content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-        {/* Logo */}
-        <div className="mb-6">
-          <Image
-            src="/img/logo.svg"
-            alt="HIT Logo"
-            width={420}
-            height={220}
-            className="mx-auto"
-          />
-        </div>
-
-        {/* Buttons */}
-        <div className="flex flex-col gap-4">
+      {/* Content - Positioned at bottom center */}
+      <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center items-center">
+        <div className="flex items-center space-x-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-[#140087]">
+            Your Way To <br /> College
+          </h1>
           <Button
             onClick={handleApplyNow}
-            className="flex justify-between bg-yellow-500 w-52 hover:bg-[#C28C19AD] text-black px-8 py-4 text-lg rounded-full"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg"
           >
-            APPLY NOW
-            <Image
-              src={"/img/arrow.svg"}
-              alt="arrow"
-              width={20}
-              height={20}
-              className="mr-2"
-            />
+            GET ADMISSION
           </Button>
-
-          <Link href="/enquiry">
-            <Button className="flex justify-centre bg-yellow-500 w-52 hover:bg-[#C28C19AD] text-black px-8 py-4 text-lg rounded-full">
-              ENQUIRY NOW
-              <Image
-                src={"/img/arrow.svg"}
-                alt="arrow"
-                width={20}
-                height={20}
-                className="mr-2"
-              />
-            </Button>
-          </Link>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

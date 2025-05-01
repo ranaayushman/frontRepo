@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useEffect, useState as useReactState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,12 +16,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, User, LogOut, Settings } from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrollPosition, setScrollPosition] = useReactState(0);
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  // Handle scroll event to adjust navbar transparency
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
+    };
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Clean up event listener
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,14 +46,8 @@ const Navbar: React.FC = () => {
   // Handle Apply Now button click to redirect to user's dashboard
   const handleApplyNow = () => {
     if (status === "authenticated" && session?.user?.id) {
-      // Only redirect if we have a valid ID
       router.push(`/dashboard/${session.user.id}`);
-    } else if (status === "authenticated" && !session?.user?.id) {
-      // If authenticated but no ID (shouldn't happen with proper setup)
-      console.error("User authenticated but no ID available");
-      router.push("/dashboard");
     } else {
-      // If no session, sign in the user
       signIn("google");
     }
   };
@@ -54,113 +66,111 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-[#FAF9F6] py-4 px-4 md:px-6 shadow-sm relative">
+    <nav
+      className={`absolute top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 transition-all duration-300 ${
+        scrollPosition > 100
+          ? "bg-white backdrop-blur-md shadow-sm"
+          : "bg-gradient-to-b from-white via-white/70 to-transparent backdrop-blur-xs"
+      }`}
+    >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/svg/logo.svg"
+            alt="Namankan Logo"
+            width={200}
+            height={150}
+            className="h-10 w-auto"
+          />
+        </Link>
+
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6 lg:space-x-12">
+        <div className="hidden md:flex items-center space-x-12">
           <Link
             href="/"
-            className="text-black font-bold text-lg lg:text-xl hover:text-amber-600 transition-colors"
+            className="text-indigo-900 font-semibold text-lg hover:text-indigo-600 transition-colors"
           >
-            Home
+            HOME
+          </Link>
+          <Link
+            href="/admission"
+            className="text-indigo-900 font-semibold text-lg hover:text-indigo-600 transition-colors"
+          >
+            GET ADMISSION
           </Link>
           <Link
             href="/about"
-            className="text-black font-bold text-lg lg:text-xl hover:text-amber-600 transition-colors"
+            className="text-indigo-900 font-semibold text-lg hover:text-indigo-600 transition-colors"
           >
-            About us
+            ABOUT US
           </Link>
           <Link
             href="/contact"
-            className="text-black font-bold text-lg lg:text-xl hover:text-amber-600 transition-colors"
+            className="text-indigo-900 font-semibold text-lg hover:text-indigo-600 transition-colors"
           >
-            Contact
+            CONTACT US
           </Link>
-          <Link
-            href="/blog"
-            className="text-black font-bold text-lg lg:text-xl hover:text-amber-600 transition-colors"
-          >
-            Blog
-          </Link>
-        </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center space-x-4">
-          <Button
-            onClick={handleApplyNow}
-            variant="default"
-            className="hidden sm:flex bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-full"
-          >
-            Apply Now
-          </Button>
+          {/* User Menu (if logged in) */}
+          {status === "authenticated" && session && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="relative h-8 w-8 rounded-full"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={session.user?.image || ""}
+                      alt={session.user?.name || "User profile"}
+                    />
+                    <AvatarFallback>{getInitials()}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {session.user?.name}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {session.user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => router.push(`/dashboard/${session.user?.id}`)}
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => signOut()}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
-          {status !== "loading" &&
-            (session ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="relative h-8 w-8 rounded-full"
-                  >
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={session.user?.image || ""}
-                        alt={session.user?.name || "User profile"}
-                      />
-                      <AvatarFallback>{getInitials()}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {session.user?.name}
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {session.user?.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() =>
-                      router.push(`/dashboard/${session.user?.id}`)
-                    }
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
-                  </DropdownMenuItem>
-                  {/* <DropdownMenuItem
-                    onClick={() =>
-                      router.push(`/dashboard/${session.user?.id}?tab=settings`)
-                    }
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem> */}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button
-                onClick={() => signIn("google")}
-                variant="ghost"
-                size="sm"
-                className="text-sm font-semibold hover:text-amber-600"
-              >
-                Login
-              </Button>
-            ))}
+          {/* Login button (if not logged in) */}
+          {status === "unauthenticated" && (
+            <Button
+              onClick={() => signIn("google")}
+              variant="ghost"
+              className="text-indigo-900 font-semibold hover:text-indigo-600"
+            >
+              Login
+            </Button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
         <Button
-          className="md:hidden"
+          className="md:hidden text-indigo-900"
           variant="ghost"
           size="icon"
           onClick={toggleMenu}
@@ -176,48 +186,36 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-[#FAF9F6] shadow-md z-10">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-sm shadow-md z-10">
           <div className="flex flex-col py-2">
             <Link
               href="/"
-              className="text-black font-bold px-4 py-3 hover:bg-gray-100"
+              className="text-indigo-900 font-semibold px-4 py-3 hover:bg-gray-100"
               onClick={() => setIsMenuOpen(false)}
             >
-              Home
+              HOME
+            </Link>
+            <Link
+              href="/admission"
+              className="text-indigo-900 font-semibold px-4 py-3 hover:bg-gray-100"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              GET ADMISSION
             </Link>
             <Link
               href="/about"
-              className="text-black font-bold px-4 py-3 hover:bg-gray-100"
+              className="text-indigo-900 font-semibold px-4 py-3 hover:bg-gray-100"
               onClick={() => setIsMenuOpen(false)}
             >
-              About us
+              ABOUT US
             </Link>
             <Link
               href="/contact"
-              className="text-black font-bold px-4 py-3 hover:bg-gray-100"
+              className="text-indigo-900 font-semibold px-4 py-3 hover:bg-gray-100"
               onClick={() => setIsMenuOpen(false)}
             >
-              Contact
+              CONTACT US
             </Link>
-            <Link
-              href="/blog"
-              className="text-black font-bold px-4 py-3 hover:bg-gray-100"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Blog
-            </Link>
-            <div className="px-4 py-2">
-              <Button
-                onClick={() => {
-                  handleApplyNow();
-                  setIsMenuOpen(false);
-                }}
-                variant="default"
-                className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-full"
-              >
-                Apply Now
-              </Button>
-            </div>
 
             {/* Login / Logout */}
             {status !== "loading" && (
