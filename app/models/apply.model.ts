@@ -34,9 +34,29 @@ const applySchema = new Schema({
     type: String,
     default: null,
   },
+  pinCode: {
+    type: String,
+    required: true,
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
   address: {
     type: String,
     required: true,
+  },
+  passingYear: {
+    type: String,
+    required: true,
+  },
+  lateral: {
+    type: Boolean,
+    default: false,
   },
 });
 const Apply = models.Apply || model("Apply", applySchema);

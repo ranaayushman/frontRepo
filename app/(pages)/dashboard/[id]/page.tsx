@@ -73,7 +73,6 @@ const DashboardPage = () => {
     return "U";
   };
 
-  // Get application status based on certain fields
   interface Application {
     _id: string;
     name?: string;
@@ -94,9 +93,7 @@ const DashboardPage = () => {
     return "Pending";
   };
 
-  // Format the date - assuming _id contains MongoDB ObjectId with timestamp
   const getApplicationDate = (id: string) => {
-    // Extract timestamp from MongoDB ObjectId
     const timestamp = parseInt(id.substring(0, 8), 16) * 1000;
     return new Date(timestamp).toLocaleDateString();
   };
@@ -126,7 +123,7 @@ const DashboardPage = () => {
   }
 
   return (
-    <section className="bg-[#FAF9F6]">
+    <section className="bg-[#FAF9F6] mt-12">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8">
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
@@ -142,14 +139,14 @@ const DashboardPage = () => {
               <p className="text-muted-foreground">{session?.user?.email}</p>
             </div>
           </div>
-          <Button>Edit Profile</Button>
+          <Button className="bg-[#140087] hover:bg-[#140060]">Edit Profile</Button>
         </div>
 
         <Tabs defaultValue="applications" className="w-full">
-          <TabsList className="grid w-full md:w-[400px] grid-cols-3">
+          <TabsList className="grid w-full md:w-[400px] grid-cols-2">
             <TabsTrigger value="applications">Applications</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+            {/* <TabsTrigger value="settings">Settings</TabsTrigger> */}
           </TabsList>
 
           <TabsContent value="applications">
@@ -215,7 +212,7 @@ const DashboardPage = () => {
                         </CardContent>
                         <CardFooter className="pt-0">
                           <Button
-                            variant="outline"
+                            className="bg-[#140087] hover:bg-[#140060]"
                             size="sm"
                             onClick={() =>
                               router.push(`/application-details/${app._id}`)
@@ -234,7 +231,7 @@ const DashboardPage = () => {
                     </div>
                   )}
                   <div className="flex justify-center pt-4">
-                    <Button onClick={applyButton}>Start New Application</Button>
+                    <Button className="bg-[#140087] hover:bg-[#140060]" onClick={applyButton}>Start New Application</Button>
                   </div>
                 </div>
               </CardContent>
@@ -242,54 +239,112 @@ const DashboardPage = () => {
           </TabsContent>
 
           <TabsContent value="profile">
-            <Card>
+            <Card className="bg-[#E6F0FA] rounded-lg shadow-md">
               <CardHeader>
-                <CardTitle>Profile Information</CardTitle>
-                <CardDescription>
-                  Your personal and contact information
-                </CardDescription>
+                <CardTitle className="text-xl font-semibold text-gray-800">
+                  {session?.user?.name}
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-medium mb-1">Personal Details</h3>
-                    <Separator className="mb-3" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Full Name
-                        </p>
-                        <p>{session?.user?.name}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Email Address
-                        </p>
-                        <p>{session?.user?.email}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">User ID</p>
-                        <p className="text-sm">{userId}</p>
-                      </div>
-                    </div>
+              <CardContent className="space-y-4">
+                {/* <div className="flex flex-col">
+                  <label className="text-sm font-medium text-[#110072]">
+                    Phone No.
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={session?.user?.phoneNumber || "Not provided"}
+                      readOnly
+                      className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800"
+                    />
+                    <Button variant="ghost" size="sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-gray-500"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                        <path
+                          fillRule="evenodd"
+                          d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </Button>
                   </div>
+                </div> */}
 
-                  <div>
-                    <h3 className="font-medium mb-1">Additional Information</h3>
-                    <Separator className="mb-3" />
-                    <p className="text-muted-foreground">
-                      No additional information provided
-                    </p>
-                    <Button variant="outline" size="sm" className="mt-2">
-                      Complete Your Profile
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-[#110072]">
+                    E-Mail
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="email"
+                      value={session?.user?.email || "someone@gmail.com"}
+                      readOnly
+                      className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800"
+                    />
+                    <Button variant="ghost" size="sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-gray-500"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                        <path
+                          fillRule="evenodd"
+                          d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
                     </Button>
                   </div>
                 </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-[#110072]">
+                    Address Line
+                  </label>
+                  <input
+                    type="text"
+                    value="address line content"
+                    readOnly
+                    className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800"
+                  />
+                </div>
+{/* 
+                <div className="flex space-x-4">
+                  <div className="flex-1">
+                    <label className="text-sm font-medium text-purple-700">
+                      State
+                    </label>
+                    <input
+                      type="text"
+                      value="Jammu and Kashmir"
+                      readOnly
+                      className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-sm font-medium text-purple-700">
+                      District
+                    </label>
+                    <input
+                      type="text"
+                      value="Srinagar"
+                      readOnly
+                      className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800"
+                    />
+                  </div>
+                </div> */}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="settings">
+          {/* <TabsContent value="settings">
             <Card>
               <CardHeader>
                 <CardTitle>Account Settings</CardTitle>
@@ -337,7 +392,7 @@ const DashboardPage = () => {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </div>
     </section>
