@@ -1,74 +1,59 @@
 "use client";
 
-import Image from "next/image";
-
-const features = [
-  {
-    title: "No Entrance Exams",
-    description:
-      "Selected colleges offer direct admissions without the need for entrance exams, making the process hassle-free.",
-  },
-  {
-    title: "100% Verified Support",
-    description:
-      "Rest assured with our fully verified support system that ensures a smooth and reliable admission process.",
-  },
-  {
-    title: "Expert Counselling",
-    description:
-      "Receive personalized guidance and support from experienced counselors to help you make informed decisions.",
-  },
-];
-
-const WhyUs = () => {
+const ManagementQuota = () => {
   return (
-    <section className="relative w-full py-20 px-4 md:px-20 overflow-hidden">
-      {/* Background Image */}
-      <Image
-        src="/img/whyus.jpg" // your image path
-        alt="Why Choose Us Background"
-        fill
-        className="object-cover object-center z-0"
-      />
+    <section className="w-full relative overflow-hidden py-16 px-4 md:px-16 bg-[#88B1E94D]">
+      {/* Gradient Overlay */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 20%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,1) 100%)",
+        }}
+      ></div>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50 z-10" />
-
-      {/* Content */}
-      <div className="relative z-20 max-w-7xl mx-auto flex flex-col items-center text-center">
-        {/* Heading */}
-        <div className="bg-yellow-600 text-white font-bold text-4xl md:text-5xl px-10 py-5 rounded-md mb-20">
-          Why Choose Us?
+      {/* Main Content */}
+      <div className="relative z-10 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+        {/* Left Side - Text Content */}
+        <div className="md:w-3/5">
+          <h2 className="text-3xl md:text-4xl font-bold text-indigo-900 mb-8">
+            WHAT IS MANAGEMENT QUOTA ?
+          </h2>
+          <p className="text-lg md:text-xl text-gray-800 max-w-2xl">
+            A system where private and deemed universities reserve a certain
+            percentage of their seats for direct admission, bypassing the usual
+            merit-based or entrance exam selection processes.
+          </p>
         </div>
 
-        {/* Cards */}
-        <div className="relative w-full flex flex-col items-center">
-          {/* Top 2 Cards */}
-          <div className="flex flex-col md:flex-row justify-around gap-12 w-full">
-            {/* First Card */}
-            <div className="bg-white p-10 rounded-xl shadow-2xl max-w-md w-full md:mt-0 mt-6">
-              <h3 className="text-2xl font-bold mb-4">{features[0].title}</h3>
-              <p className="text-gray-700 text-base">
-                {features[0].description}
-              </p>
-            </div>
-
-            {/* Second Card */}
-            <div className="bg-white p-10 rounded-xl shadow-2xl max-w-md w-full md:mt-0 mt-6">
-              <h3 className="text-2xl font-bold mb-4">{features[1].title}</h3>
-              <p className="text-gray-700 text-base">
-                {features[1].description}
-              </p>
-            </div>
-          </div>
-
-          {/* Bottom Single Card */}
-          <div className="mt-12">
-            <div className="bg-white p-10 rounded-xl shadow-2xl max-w-md w-full mx-auto">
-              <h3 className="text-2xl font-bold mb-4">{features[2].title}</h3>
-              <p className="text-gray-700 text-base">
-                {features[2].description}
-              </p>
+        {/* Right Side - NO RANK NO WORRIES Box */}
+        <div className="md:w-2/5 mt-10 md:mt-0 flex justify-center">
+          <div className="bg-blue-50 border-2 border-[#110072] rounded-2xl p-8 w-72">
+            <div className="flex flex-col items-center">
+              <h1
+                className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text text-center mb-1"
+                style={{
+                  WebkitTextStroke: "1px #d9d3ff",
+                  color: "transparent",
+                }}
+              >
+                NO
+              </h1>
+              <div className="text-6xl md:text-5xl font-bold text-[#110072] mb-4">
+                RANK
+              </div>
+              <h1
+                className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text text-center mb-1"
+                style={{
+                  WebkitTextStroke: "1px #d9d3ff",
+                  color: "transparent",
+                }}
+              >
+                NO
+              </h1>
+              <div className="text-6xl md:text-5xl font-bold text-[#110072] mb-4">
+                WORRIES
+              </div>
             </div>
           </div>
         </div>
@@ -77,4 +62,4 @@ const WhyUs = () => {
   );
 };
 
-export default WhyUs;
+export default ManagementQuota;

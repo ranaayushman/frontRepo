@@ -36,21 +36,22 @@ const Hero = () => {
         className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 10%, rgba(255,255,255,0) 20%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.8) 90%, rgba(255,255,255,1) 100%)",
+            "linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 20%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,1) 100%)",
         }}
       ></div>
 
       {/* Content - Positioned at bottom center */}
       <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center items-center">
         <div className="flex items-center space-x-8">
-          <h1 className="text-4xl md:text-6xl font-bold text-[#140087]">
+          <h1 className=" text-4xl md:text-6xl font-bold text-[#140087]">
             Your Way To <br /> College
           </h1>
           <Button
             onClick={handleApplyNow}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg"
+            className="bg-[#140087] hover:bg-[#140060] text-white font-bold py-3 h-24 px-12 rounded-lg text-2xl"
           >
-            GET ADMISSION
+            GET
+            <br /> ADMISSION
           </Button>
         </div>
       </div>
