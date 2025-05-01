@@ -15,7 +15,7 @@ export default function AboutPage() {
             College Counseling Portal <span className="text-[#140087] font-bold">namankan.in</span>
           </span>
           , your trusted companion in making one of the most important decisions
-          of your academic journey. We’re dedicated to offering personalized,
+          of your academic journey. We&apos;re dedicated to offering personalized,
           accurate, and expert counseling to students navigating the complex
           world of college admissions.
         </p>
