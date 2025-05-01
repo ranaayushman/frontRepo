@@ -193,7 +193,7 @@ export function AdmissionForm({
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button className="bg-[#140087] hover:bg-[#140060]" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : buttonText}
             </Button>
           </DialogFooter>

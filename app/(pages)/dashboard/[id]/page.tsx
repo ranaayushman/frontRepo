@@ -100,7 +100,7 @@ const DashboardPage = () => {
 
   if (status === "loading" || loading) {
     return (
-      <div className="bg-[#FAF9F6] container mx-auto px-4 py-8">
+      <div className="bg-[#FAF9F6] container mx-auto px-4 py-8 mt-12">
         <div className="flex flex-col space-y-6">
           <div className="flex items-center space-x-4">
             <Skeleton className="h-12 w-12 rounded-full" />
@@ -139,7 +139,7 @@ const DashboardPage = () => {
               <p className="text-muted-foreground">{session?.user?.email}</p>
             </div>
           </div>
-          <Button className="bg-[#140087] hover:bg-[#140060]">Edit Profile</Button>
+          {/* <Button className="bg-[#140087] hover:bg-[#140060]">Edit Profile</Button> */}
         </div>
 
         <Tabs defaultValue="applications" className="w-full">

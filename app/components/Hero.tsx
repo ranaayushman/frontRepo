@@ -41,14 +41,14 @@ const Hero = () => {
       ></div>
 
       {/* Content - Positioned at bottom center */}
-      <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center items-center">
-        <div className="flex items-center space-x-8">
-          <h1 className=" text-4xl md:text-6xl font-bold text-[#140087]">
+      <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center items-center ">
+        <div className="flex flex-col space-y-4 md:flex-row items-center space-x-8">
+          <h1 className=" text-4xl md:text-6xl text-center font-bold text-[#140087]">
             Your Way To <br /> College
           </h1>
           <Button
             onClick={handleApplyNow}
-            className="bg-[#140087] hover:bg-[#140060] text-white font-bold py-3 h-24 px-12 rounded-lg text-2xl"
+            className="bg-[#140087] hover:bg-[#140060] text-white font-bold py-8 md:py-3 h-12 md:h-24 px-12 rounded-lg text-xl md:text-2xl"
           >
             GET
             <br /> ADMISSION

@@ -10,7 +10,7 @@ const WestBengalAdmission = () => {
         <h1
           className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text"
           style={{
-            WebkitTextStroke: "1px #d9d3ff",
+            WebkitTextStroke: "1px #110072",
             color: "transparent",
           }}
         >

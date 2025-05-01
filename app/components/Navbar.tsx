@@ -17,10 +17,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Menu, X, User, LogOut } from "lucide-react";
+import { AdmissionForm } from "./Contact";
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollPosition, setScrollPosition] = useReactState(0);
+  const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -43,8 +45,8 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Handle Apply Now button click to redirect to user's dashboard
-  const handleApplyNow = () => {
+  // Handle navigating to dashboard or signin
+  const handleDashboardNavigation = () => {
     if (status === "authenticated" && session?.user?.id) {
       router.push(`/dashboard/${session.user.id}`);
     } else {
@@ -89,28 +91,28 @@ const Navbar: React.FC = () => {
         <div className="hidden md:flex items-center space-x-12">
           <Link
             href="/"
-            className="text-indigo-900 font-semibold text-lg hover:text-indigo-600 transition-colors"
+            className="text-[#140087] font-semibold text-lg hover:text-[#140060] transition-colors"
           >
             HOME
           </Link>
-          <Link
-            href="/admission"
-            className="text-indigo-900 font-semibold text-lg hover:text-indigo-600 transition-colors"
+          <button
+            onClick={handleDashboardNavigation}
+            className="text-[#140087] font-semibold text-lg hover:text-[#140060] transition-colors"
           >
             GET ADMISSION
-          </Link>
+          </button>
           <Link
             href="/about"
-            className="text-indigo-900 font-semibold text-lg hover:text-indigo-600 transition-colors"
+            className="text-[#140087] font-semibold text-lg hover:text-[#140060] transition-colors"
           >
             ABOUT US
           </Link>
-          <Link
-            href="/contact"
-            className="text-indigo-900 font-semibold text-lg hover:text-indigo-600 transition-colors"
+          <button
+            onClick={() => setIsContactFormOpen(true)}
+            className="text-[#140087] font-semibold text-lg hover:text-[#140060] transition-colors"
           >
             CONTACT US
-          </Link>
+          </button>
 
           {/* User Menu (if logged in) */}
           {status === "authenticated" && session && (
@@ -161,7 +163,7 @@ const Navbar: React.FC = () => {
             <Button
               onClick={() => signIn("google")}
               variant="ghost"
-              className="text-indigo-900 font-semibold hover:text-indigo-600"
+              className="text-[#140087] font-semibold hover:text-[#140060] transition-colors"
             >
               Login
             </Button>
@@ -170,7 +172,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Button */}
         <Button
-          className="md:hidden text-indigo-900"
+          className="md:hidden text-[#140087]"
           variant="ghost"
           size="icon"
           onClick={toggleMenu}
@@ -190,32 +192,36 @@ const Navbar: React.FC = () => {
           <div className="flex flex-col py-2">
             <Link
               href="/"
-              className="text-indigo-900 font-semibold px-4 py-3 hover:bg-gray-100"
+              className="text-[#140087] font-semibold px-4 py-3 hover:bg-gray-100"
               onClick={() => setIsMenuOpen(false)}
             >
               HOME
             </Link>
-            <Link
-              href="/admission"
-              className="text-indigo-900 font-semibold px-4 py-3 hover:bg-gray-100"
-              onClick={() => setIsMenuOpen(false)}
+            <button
+              onClick={() => {
+                handleDashboardNavigation();
+                setIsMenuOpen(false);
+              }}
+              className="text-left text-[#140087] font-semibold px-4 py-3 hover:bg-gray-100"
             >
               GET ADMISSION
-            </Link>
+            </button>
             <Link
               href="/about"
-              className="text-indigo-900 font-semibold px-4 py-3 hover:bg-gray-100"
+              className="text-[#140087] font-semibold px-4 py-3 hover:bg-gray-100"
               onClick={() => setIsMenuOpen(false)}
             >
               ABOUT US
             </Link>
-            <Link
-              href="/contact"
-              className="text-indigo-900 font-semibold px-4 py-3 hover:bg-gray-100"
-              onClick={() => setIsMenuOpen(false)}
+            <button
+              className="text-left text-[#140087] font-semibold px-4 py-3 hover:bg-gray-100 w-full"
+              onClick={() => {
+                setIsContactFormOpen(true);
+                setIsMenuOpen(false);
+              }}
             >
               CONTACT US
-            </Link>
+            </button>
 
             {/* Login / Logout */}
             {status !== "loading" && (
@@ -273,6 +279,13 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Contact Form */}
+      <AdmissionForm 
+        isOpen={isContactFormOpen} 
+        setIsOpen={setIsContactFormOpen}
+        buttonText="Submit Inquiry" 
+      />
     </nav>
   );
 };

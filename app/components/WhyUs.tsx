@@ -33,25 +33,25 @@ const ManagementQuota = () => {
               <h1
                 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text text-center mb-1"
                 style={{
-                  WebkitTextStroke: "1px #d9d3ff",
+                  WebkitTextStroke: "1px #110072",
                   color: "transparent",
                 }}
               >
                 NO
               </h1>
-              <div className="text-6xl md:text-5xl font-bold text-[#110072] mb-4">
+              <div className="text-4xl md:text-5xl font-bold text-[#110072] mb-4">
                 RANK
               </div>
               <h1
                 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text text-center mb-1"
                 style={{
-                  WebkitTextStroke: "1px #d9d3ff",
+                  WebkitTextStroke: "1px #110072",
                   color: "transparent",
                 }}
               >
                 NO
               </h1>
-              <div className="text-6xl md:text-5xl font-bold text-[#110072] mb-4">
+              <div className="text-4xl md:text-5xl font-bold text-[#110072] mb-4">
                 WORRIES
               </div>
             </div>
