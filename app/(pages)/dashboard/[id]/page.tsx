@@ -231,7 +231,12 @@ const DashboardPage = () => {
                     </div>
                   )}
                   <div className="flex justify-center pt-4">
-                    <Button className="bg-[#140087] hover:bg-[#140060]" onClick={applyButton}>Start New Application</Button>
+                    <Button
+                      className="bg-[#140087] hover:bg-[#140060]"
+                      onClick={applyButton}
+                    >
+                      Start New Application
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -239,7 +244,7 @@ const DashboardPage = () => {
           </TabsContent>
 
           <TabsContent value="profile">
-            <Card className="bg-[#E6F0FA] rounded-lg shadow-md">
+            <Card className="bg-[#E6F0FA] rounded-lg shadow-md mt-4">
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-800">
                   {session?.user?.name}
@@ -276,7 +281,7 @@ const DashboardPage = () => {
                 </div> */}
 
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium text-[#110072]">
+                  <label className="text-sm font-medium text-[#110072] mb-2">
                     E-Mail
                   </label>
                   <div className="flex items-center space-x-2">
@@ -286,7 +291,7 @@ const DashboardPage = () => {
                       readOnly
                       className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800"
                     />
-                    <Button variant="ghost" size="sm">
+                    {/* <Button variant="ghost" size="sm">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5 text-gray-500"
@@ -300,22 +305,22 @@ const DashboardPage = () => {
                           clipRule="evenodd"
                         />
                       </svg>
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium text-[#110072]">
-                    Address Line
+                  <label className="text-sm font-medium text-[#110072] mb-2">
+                    User Id
                   </label>
                   <input
                     type="text"
-                    value="address line content"
+                    value={session?.user?.id || "Not provided"}
                     readOnly
                     className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800"
                   />
                 </div>
-{/* 
+                {/* 
                 <div className="flex space-x-4">
                   <div className="flex-1">
                     <label className="text-sm font-medium text-purple-700">

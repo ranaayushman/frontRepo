@@ -69,10 +69,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`absolute top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 transition-all duration-300 ${
-        scrollPosition > 100
-          ? "bg-white backdrop-blur-md shadow-sm"
-          : "bg-gradient-to-b from-white via-white/70 to-transparent backdrop-blur-xs"
+      className={`absolute top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 transition-all duration-300  bg-gradient-to-b from-white via-white/70 to-transparent backdrop-blur-xs
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -281,10 +278,10 @@ const Navbar: React.FC = () => {
       )}
 
       {/* Contact Form */}
-      <AdmissionForm 
-        isOpen={isContactFormOpen} 
+      <AdmissionForm
+        isOpen={isContactFormOpen}
         setIsOpen={setIsContactFormOpen}
-        buttonText="Submit Inquiry" 
+        buttonText="Submit Inquiry"
       />
     </nav>
   );

@@ -8,7 +8,7 @@ const WestBengalAdmission = () => {
       {/* Top Domain Name - Outlined Text */}
       <div className="text-center mb-16">
         <h1
-          className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text"
+          className="text-4xl md:text-7xl font-bold text-transparent bg-clip-text"
           style={{
             WebkitTextStroke: "1px #110072",
             color: "transparent",
