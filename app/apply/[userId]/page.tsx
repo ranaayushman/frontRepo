@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ApplyPage = () => {
   const params = useParams();
@@ -25,15 +32,81 @@ const ApplyPage = () => {
     class12marks: "",
     address: "",
     state: "",
+    passingYear: "",
     city: "",
     pinCode: "",
-    lateralEntry:false,
+    lateralEntry: false,
   });
+
+  // List of Indian states
+  const indianStates = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Delhi (NCT)",
+  ];
+
+  // List of engineering branches
+  const engineeringBranches = [
+    "Computer Science and Engineering",
+    "Information Technology",
+    "Electronics and Communication Engineering",
+    "Electrical Engineering",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Chemical Engineering",
+    // "Aerospace Engineering",
+    "Biotechnology",
+    "CSE-AIML",
+    "CSE-DS",
+    "AEIE",
+  ];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target as HTMLInputElement;
+
+    // Handle checkbox separately to ensure boolean value
+    if (type === "checkbox") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: (e.target as HTMLInputElement).checked,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    setErrorMessage("");
+  };
+
+  // Handle Select change
+  const handleSelectChange = (value: string, name: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrorMessage("");
   };
@@ -50,7 +123,8 @@ const ApplyPage = () => {
       state: "",
       city: "",
       pinCode: "",
-      lateralEntry:false,
+      passingYear: "",
+      lateralEntry: false,
     });
   };
 
@@ -63,7 +137,18 @@ const ApplyPage = () => {
     try {
       const response = await axios.post("/api/v1/apply", {
         userId,
-        ...formData,
+        name: formData.name,
+        guardianNumber: formData.guardianNumber,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        branch: formData.branch,
+        class12marks: formData.class12marks,
+        address: formData.address,
+        pinCode: formData.pinCode,
+        state: formData.state,
+        city: formData.city,
+        passingYear: formData.passingYear,
+        lateralEntry: formData.lateralEntry,
       });
 
       if (response.data.success) {
@@ -90,6 +175,22 @@ const ApplyPage = () => {
   return (
     <div className="min-h-screen bg-white py-12 px-4 mt-12">
       <div className="max-w-5xl mx-auto space-y-10">
+        {/* Error/Success Message at the top */}
+        {(successMessage || errorMessage) && (
+          <div className="mb-4">
+            {successMessage && (
+              <div className="text-green-700 bg-green-100 border border-green-400 rounded p-4">
+                {successMessage}
+              </div>
+            )}
+            {errorMessage && (
+              <div className="text-red-700 bg-red-100 border border-red-400 rounded p-4">
+                {errorMessage}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Personal Details */}
         <form onSubmit={handleSubmit}>
           <div className="bg-blue-100 shadow-md rounded-xl p-6">
@@ -149,13 +250,25 @@ const ApplyPage = () => {
               </div>
               <div>
                 <Label className="mb-2">State</Label>
-                <Input
+                <Select
                   name="state"
-                  className="bg-white"
                   value={formData.state}
-                  onChange={handleChange}
+                  onValueChange={(value: string) =>
+                    handleSelectChange(value, "state")
+                  }
                   required
-                />
+                >
+                  <SelectTrigger className="bg-white w-full">
+                    <SelectValue placeholder="Select a state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {indianStates.map((state) => (
+                      <SelectItem key={state} value={state}>
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label className="mb-2">City</Label>
@@ -178,7 +291,7 @@ const ApplyPage = () => {
                 />
               </div>
             </div>
-            <div className="mt-6 text-right">
+            {/* <div className="mt-6 text-right">
               <Button
                 type="button"
                 variant="default"
@@ -186,7 +299,7 @@ const ApplyPage = () => {
               >
                 Fill College Details
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* College Application */}
@@ -197,13 +310,25 @@ const ApplyPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="mb-2">Branch</Label>
-                <Input
+                <Select
                   name="branch"
-                  className="bg-white"
                   value={formData.branch}
-                  onChange={handleChange}
+                  onValueChange={(value: string) =>
+                    handleSelectChange(value, "branch")
+                  }
                   required
-                />
+                >
+                  <SelectTrigger className="bg-white w-full">
+                    <SelectValue placeholder="Select a branch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {engineeringBranches.map((branch) => (
+                      <SelectItem key={branch} value={branch}>
+                        {branch}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex items-end gap-2">
                 <div className="flex-grow">
@@ -216,17 +341,29 @@ const ApplyPage = () => {
                     required
                   />
                 </div>
+
                 <div className="mt-6">
                   <Label className="inline-flex items-center space-x-2">
                     <input
                       type="checkbox"
-                      className="accent-[#140087] "
+                      name="lateralEntry"
+                      className="accent-[#140087]"
                       checked={formData.lateralEntry}
-
+                      onChange={handleChange}
                     />
                     <span className="text-sm">Lateral Entry</span>
                   </Label>
                 </div>
+              </div>
+              <div className="flex-grow">
+                <Label className="mb-2">Passing Year of class 12</Label>
+                <Input
+                  name="passingYear"
+                  className="bg-white"
+                  value={formData.passingYear}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             </div>
 
@@ -241,6 +378,7 @@ const ApplyPage = () => {
             </div>
           </div>
 
+          {/* Error/Success Message at the bottom (kept for redundancy) */}
           {successMessage && (
             <div className="mt-4 text-green-700 bg-green-100 border border-green-400 rounded p-4">
               {successMessage}

@@ -26,10 +26,10 @@ const applySchema = new Schema({
     type: String,
     required: true,
   },
-  aadharCardURL: {
-    type: String,
-    default: null,
-  },
+  // aadharCardURL: {
+  //   type: String,
+  //   default: null,
+  // },
   class12marks: {
     type: String,
     default: null,

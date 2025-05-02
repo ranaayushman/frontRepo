@@ -17,8 +17,14 @@ export async function POST(req: Request) {
       branch,
       class12marks,
       address,
+      passingYear,
+      lateralEntry,
+      state,
+      city,
+      pinCode,
     } = body;
 
+    // Ensure lateralEntry is stored as a boolean
     const newApplication = new Apply({
       userId: userId || undefined,
       name,
@@ -28,6 +34,11 @@ export async function POST(req: Request) {
       branch,
       class12marks,
       address,
+      passingYear,
+      lateralEntry: Boolean(lateralEntry), // Convert to boolean explicitly
+      state,
+      city,
+      pinCode,
     });
 
     await newApplication.save();
@@ -38,6 +49,7 @@ export async function POST(req: Request) {
         message: "Application submitted successfully",
         data: {
           id: newApplication._id,
+          ...newApplication.toJSON(),
         },
       },
       { status: 201 }
