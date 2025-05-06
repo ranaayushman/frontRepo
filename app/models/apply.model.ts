@@ -1,11 +1,11 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
 const applySchema = new Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
+  // userId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "User",
+  //   required: false,
+  // },
   name: {
     type: String,
     required: true,
@@ -54,7 +54,7 @@ const applySchema = new Schema({
     type: String,
     required: true,
   },
-  lateral: {
+  lateralEntry: {
     type: Boolean,
     default: false,
   },

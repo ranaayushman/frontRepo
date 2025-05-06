@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     const {
-      userId,
+      // userId,
       name,
       guardianNumber,
       email,
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     // Ensure lateralEntry is stored as a boolean
     const newApplication = new Apply({
-      userId: userId || undefined,
+      // userId: userId || undefined,
       name,
       guardianNumber,
       email,

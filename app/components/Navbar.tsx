@@ -8,14 +8,14 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState as useReactState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuLabel,
+//   DropdownMenuSeparator,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 import { Menu, X, User, LogOut } from "lucide-react";
 import { AdmissionForm } from "./Contact";
 
@@ -47,8 +47,8 @@ const Navbar: React.FC = () => {
 
   // Handle navigating to dashboard or signin
   const handleDashboardNavigation = () => {
-    if (status === "authenticated" && session?.user?.id) {
-      router.push(`/dashboard/${session.user.id}`);
+    if (status === "authenticated") {
+      router.push(`/apply/`);
     } else {
       signIn("google");
     }
@@ -112,7 +112,7 @@ const Navbar: React.FC = () => {
           </button>
 
           {/* User Menu (if logged in) */}
-          {status === "authenticated" && session && (
+          {/* {status === "authenticated" && session && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -155,7 +155,7 @@ const Navbar: React.FC = () => {
             </DropdownMenu>
           )}
 
-          {/* Login button (if not logged in) */}
+          Login button (if not logged in)
           {status === "unauthenticated" && (
             <Button
               onClick={() => signIn("google")}
@@ -164,7 +164,7 @@ const Navbar: React.FC = () => {
             >
               Login
             </Button>
-          )}
+          )} */}
         </div>
 
         {/* Mobile Menu Button */}

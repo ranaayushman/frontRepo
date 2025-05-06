@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import Navbar from "./components/Navbar";
+import { ToastProvider } from "@/components/ui/toaster";
 
 // Define Montserrat as the primary font
 const montserrat = Montserrat({
@@ -28,6 +29,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {children}
+          <ToastProvider />
         </Providers>
       </body>
     </html>
