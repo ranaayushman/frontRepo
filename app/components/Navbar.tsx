@@ -1,29 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState as useReactState } from "react";
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuLabel,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { AdmissionForm } from "./Contact";
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrollPosition, setScrollPosition] = useReactState(0);
+  const [scrollPosition, setScrollPosition] = useState(0);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
-  const { data: session, status } = useSession();
   const router = useRouter();
 
   // Handle scroll event to adjust navbar transparency
@@ -45,32 +33,14 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Handle navigating to dashboard or signin
-  const handleDashboardNavigation = () => {
-    if (status === "authenticated") {
-      router.push(`/apply/`);
-    } else {
-      signIn("google");
-    }
-  };
-
-  // Get user initials for avatar fallback
-  const getInitials = () => {
-    if (session?.user?.name) {
-      return session.user.name
-        .split(" ")
-        .map((word) => word[0])
-        .join("")
-        .toUpperCase()
-        .substring(0, 2);
-    }
-    return "U";
+  // Handle navigating to application page
+  const handleAdmissionNavigation = () => {
+    router.push("/apply");
   };
 
   return (
     <nav
-      className={`absolute top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 transition-all duration-300  bg-gradient-to-b from-white via-white/70 to-transparent backdrop-blur-xs
-      }`}
+      className={`absolute top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 transition-all duration-300 bg-gradient-to-b from-white via-white/70 to-transparent backdrop-blur-xs`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
@@ -93,7 +63,7 @@ const Navbar: React.FC = () => {
             HOME
           </Link>
           <button
-            onClick={handleDashboardNavigation}
+            onClick={handleAdmissionNavigation}
             className="text-[#140087] font-semibold text-lg hover:text-[#140060] transition-colors"
           >
             GET ADMISSION
@@ -110,61 +80,6 @@ const Navbar: React.FC = () => {
           >
             CONTACT US
           </button>
-
-          {/* User Menu (if logged in) */}
-          {/* {status === "authenticated" && session && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
-                >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={session.user?.image || ""}
-                      alt={session.user?.name || "User profile"}
-                    />
-                    <AvatarFallback>{getInitials()}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {session.user?.name}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {session.user?.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => router.push(`/dashboard/${session.user?.id}`)}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Dashboard</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-
-          Login button (if not logged in)
-          {status === "unauthenticated" && (
-            <Button
-              onClick={() => signIn("google")}
-              variant="ghost"
-              className="text-[#140087] font-semibold hover:text-[#140060] transition-colors"
-            >
-              Login
-            </Button>
-          )} */}
         </div>
 
         {/* Mobile Menu Button */}
@@ -196,7 +111,7 @@ const Navbar: React.FC = () => {
             </Link>
             <button
               onClick={() => {
-                handleDashboardNavigation();
+                handleAdmissionNavigation();
                 setIsMenuOpen(false);
               }}
               className="text-left text-[#140087] font-semibold px-4 py-3 hover:bg-gray-100"
@@ -219,60 +134,6 @@ const Navbar: React.FC = () => {
             >
               CONTACT US
             </button>
-
-            {/* Login / Logout */}
-            {status !== "loading" && (
-              <div className="px-4 py-3">
-                {session ? (
-                  <>
-                    <div className="flex items-center space-x-2 px-2 py-1 mb-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={session.user?.image || ""} />
-                        <AvatarFallback>{getInitials()}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">
-                          {session.user?.name}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {session.user?.email}
-                        </span>
-                      </div>
-                    </div>
-                    <Button
-                      onClick={() => {
-                        router.push(`/dashboard/${session.user?.id}`);
-                        setIsMenuOpen(false);
-                      }}
-                      variant="outline"
-                      className="w-full justify-start mb-2"
-                    >
-                      <User className="mr-2 h-4 w-4" />
-                      Dashboard
-                    </Button>
-                    <Button
-                      onClick={() => signOut()}
-                      variant="outline"
-                      className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      signIn("google");
-                      setIsMenuOpen(false);
-                    }}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    Login with Google
-                  </Button>
-                )}
-              </div>
-            )}
           </div>
         </div>
       )}

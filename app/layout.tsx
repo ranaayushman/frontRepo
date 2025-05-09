@@ -26,11 +26,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
-        <Providers>
+        {/* <Providers>
           <Navbar />
           {children}
           <ToastProvider />
-        </Providers>
+        </Providers> */}
+        {children}
       </body>
     </html>
   );

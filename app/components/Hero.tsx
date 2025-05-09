@@ -2,20 +2,13 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSession, signIn } from "next-auth/react";
 
 const Hero = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
 
   const handleApplyNow = () => {
-    if (status === "unauthenticated") {
-      signIn("google"); // Triggers Google Sign-In
-    } else if (session?.user?.id) {
-      router.push(`/dashboard/${session.user.id}`);
-    }
+    router.push("/admission"); // Redirect to admission page directly
   };
 
   return (
@@ -41,9 +34,9 @@ const Hero = () => {
       ></div>
 
       {/* Content - Positioned at bottom center */}
-      <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center items-center ">
-        <div className="flex flex-col space-y-4 md:flex-row items-center space-x-8">
-          <h1 className=" text-4xl md:text-6xl text-center font-bold text-[#140087]">
+      <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center items-center">
+        <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 items-center md:space-x-8">
+          <h1 className="text-4xl md:text-6xl text-center font-bold text-[#140087]">
             Your Way To <br /> College
           </h1>
           <Button
