@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Sidebar from "./admin/components/Sidebar";
+import Sidebar from "./components/Sidebar";
 
 export default function AdminDashboard({
   children,

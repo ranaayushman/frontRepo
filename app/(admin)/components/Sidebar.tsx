@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation"; // Import useRouter and usePathname from next/navigation
 import {
   LayoutDashboard,
   Settings,
@@ -45,6 +46,8 @@ const SidebarItem = ({
 
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const router = useRouter(); // Get the router instance
+  const currentPath = usePathname(); // Get the current pathname
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
@@ -54,8 +57,7 @@ function Sidebar() {
     {
       icon: <LayoutDashboard className="h-5 w-5" />,
       label: "Dashboard",
-      href: "/dashboard",
-      active: true,
+      href: "/admin/dashboard",
     },
     {
       icon: <Users className="h-5 w-5" />,
@@ -64,8 +66,8 @@ function Sidebar() {
     },
     {
       icon: <FileText className="h-5 w-5" />,
-      label: "Documents",
-      href: "/documents",
+      label: "Colleges",
+      href: "/admin/colleges",
     },
     {
       icon: <PieChart className="h-5 w-5" />,
@@ -110,7 +112,7 @@ function Sidebar() {
             key={index}
             icon={item.icon}
             label={item.label}
-            active={item.active}
+            active={currentPath === item.href} // Dynamically set active based on current path
             href={item.href}
             collapsed={collapsed}
           />
@@ -122,6 +124,7 @@ function Sidebar() {
           icon={<LogOut className="h-5 w-5 text-red-500" />}
           label="Logout"
           href="/logout"
+          active={currentPath === "/logout"} // Highlight logout if active
           collapsed={collapsed}
         />
       </div>
