@@ -9,8 +9,24 @@ import {
   Copyright,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const Discover = () => {
+  const socialLinks = [
+    {
+      icon: Phone,
+      url: "tel:+919123916285",
+    },
+    {
+      icon: Mail,
+      url: "mailto:directadmissionbengal@gmail.com",
+    },
+    {
+      icon: Instagram,
+      url: "https://www.instagram.com/namankan_bengal/",
+    },
+  ];
+
   return (
     <footer className="w-full bg-[#110072] text-white py-16">
       <div className="px-6 md:px-12 lg:px-20">
@@ -62,13 +78,17 @@ const Discover = () => {
             </Button>
 
             <div className="flex gap-4 mt-10">
-              {[Phone, Mail, Instagram].map((Icon, i) => (
-                <div
+              {socialLinks.map(({ icon: Icon, url }, i) => (
+                <Link
                   key={i}
-                  className="w-10 h-10 flex items-center justify-center border border-white/60 rounded-full hover:bg-white/10"
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Icon size={20} />
-                </div>
+                  <div className="w-10 h-10 flex items-center justify-center border border-white/60 rounded-full hover:bg-white/10">
+                    <Icon size={20} />
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
