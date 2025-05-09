@@ -8,7 +8,7 @@ const Hero = () => {
   const router = useRouter();
 
   const handleApplyNow = () => {
-    router.push("/admission"); // Redirect to admission page directly
+    router.push("/apply"); // Redirect to admission page directly
   };
 
   return (

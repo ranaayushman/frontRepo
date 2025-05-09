@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import Image from "next/image";
 import {
@@ -10,6 +11,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+// import { useRouter } from "next/router";
 
 const Discover = () => {
   const socialLinks = [
@@ -26,6 +29,12 @@ const Discover = () => {
       url: "https://www.instagram.com/namankan_bengal/",
     },
   ];
+
+  const router = useRouter();
+
+  const handleApply = () => {
+    router.push("/apply");
+  };
 
   return (
     <footer className="w-full bg-[#110072] text-white py-16">
@@ -73,7 +82,10 @@ const Discover = () => {
               <li>3. IEM, Kolkata</li>
             </ul>
 
-            <Button className="bg-[#FFAE00] text-black font-bold h-12 w-1/2 px-8 hover:bg-[#e6a700] rounded-md">
+            <Button
+              onClick={handleApply}
+              className="bg-[#FFAE00] text-black font-bold h-12 w-1/2 px-8 hover:bg-[#e6a700] rounded-md"
+            >
               APPLY NOW
             </Button>
 
