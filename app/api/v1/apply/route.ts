@@ -10,6 +10,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     const {
       // userId,
+      collegeId,
+      branchId,
       name,
       guardianNumber,
       email,
@@ -28,6 +30,8 @@ export async function POST(req: Request) {
     const newApplication = new Apply({
       // userId: userId || undefined,
       name,
+      collegeId,
+      branchId,
       guardianNumber,
       email,
       phoneNumber,
