@@ -62,7 +62,7 @@ function Sidebar() {
     {
       icon: <Users className="h-5 w-5" />,
       label: "Users",
-      href: "/users",
+      href: "/admin/users",
     },
     {
       icon: <FileText className="h-5 w-5" />,
@@ -93,7 +93,7 @@ function Sidebar() {
       }`}
     >
       <div className="flex items-center justify-between mb-8 px-2 pt-4">
-        {!collapsed && <h2 className="text-xl font-bold">App</h2>}
+        {!collapsed && <h2 className="text-xl font-bold">Dashboard</h2>}
         <button
           onClick={toggleCollapse}
           className="h-8 w-8 rounded-md hover:bg-gray-100 flex items-center justify-center"
