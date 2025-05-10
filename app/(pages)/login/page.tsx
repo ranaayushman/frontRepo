@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -28,11 +28,10 @@ const LoginPage = () => {
 
       const { token, user } = res.data;
 
-      // Store JWT and role in cookies
       Cookies.set("token", token, { expires: 7 });
       Cookies.set("role", user.role, { expires: 7 });
 
-      router.push("/admin/dashboard"); // Redirect to dashboard or wherever
+      router.push("/admin/dashboard");
     } catch (err: any) {
       console.error(err);
       setError(err?.response?.data?.message || "Login failed");
@@ -44,9 +43,10 @@ const LoginPage = () => {
       className="w-full min-h-screen bg-cover bg-center flex items-center justify-center px-4"
       style={{ backgroundImage: "url('/img/heritage.png')" }}
     >
-      <Card className="bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden border-none">
+      
+      <div className="bg-white rounded-3xl shadow-xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden border-none">
         {/* Login Section */}
-        <CardContent className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
           <h2 className="text-3xl font-bold text-gray-800 mb-6">Sign In</h2>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
@@ -80,6 +80,9 @@ const LoginPage = () => {
                 <input type="checkbox" />
                 Remember me
               </label>
+              <span className="cursor-pointer hover:underline">
+                Forgot Password?
+              </span>
             </div>
 
             {error && (
@@ -93,19 +96,37 @@ const LoginPage = () => {
               Sign In
             </Button>
           </form>
-        </CardContent>
-
-        {/* Right Side */}
-        <div className="w-full md:w-1/2 p-8 md:p-12 bg-gradient-to-br from-white/10 via-white/30 to-white/10 text-center flex flex-col justify-center items-center">
-          <h1 className="text-3xl font-bold text-[#110072] mb-4">Namankan</h1>
-          <h3 className="text-xl text-gray-800 font-semibold mb-2">
-            Hello Friend !
-          </h3>
-          <p className="text-gray-700 mb-6">
-            Fill up personal information and start journey with us.
-          </p>
         </div>
-      </Card>
+
+        {/* Right Side with Glassmorphism Effect */}
+        <div className="w-full md:w-1/2 relative">
+          {/* Background for glassmorphism effect */}
+          <div
+            className="absolute inset-0 bg-cover bg-center blur-sm opacity-50"
+            style={{ backgroundImage: "url('/img/heritage.png')" }}
+          ></div>
+
+          {/* Glassmorphism content */}
+          <div className="relative h-full backdrop-blur-sm bg-white/30 p-8 md:p-12 flex flex-col justify-center items-center z-10">
+            <Image
+              src="/img/primary _logo_blue.png"
+              alt="Namankan Logo"
+              height={200}
+              width={200}
+              className="object-contain mb-4"
+            />
+            <h3 className="text-xl text-[#110072] font-semibold mb-2">
+              Hello Friend !
+            </h3>
+            <p className="mb-6 text-center text-gray-800">
+              Fill up personal information and start journey with us.
+            </p>
+            {/* <Button className="bg-[#4B0082] hover:bg-indigo-900 text-white">
+              Sign Up
+            </Button> */}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
