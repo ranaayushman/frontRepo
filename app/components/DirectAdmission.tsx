@@ -21,20 +21,22 @@ const WestBengalAdmission = () => {
       {/* Main Content Container */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
         {/* Left Side - Text Content */}
-        <div className="md:w-3/5 mb-10 md:mb-0">
+        <div className="md:w-3/5 mb-10 md:mb-0 bg-[#140087] rounded-2xl p-8 text-right">
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-black">GET ADMISSION IN</h2>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#140087]">
+            <h2 className="text-2xl font-light text-[#FFFFFF]">
+              GET ADMISSION IN
+            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-[#FFAE00]">
               TOP PRIVATE COLLEGES
             </h2>
-            <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-medium text-black">OF</h3>
-              <h3 className="text-3xl md:text-4xl font-bold text-[#140087]">
+            <div className="flex items-center justify-end gap-2">
+              <h3 className="text-2xl font-light text-[#FFFFFF]">OF</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-[#FFAE00]">
                 WEST BENGAL
               </h3>
+              <h2 className="text-2xl font-light text-[#FFFFFF]">THROUGH</h2>
             </div>
-            <h2 className="text-2xl font-bold text-black">THROUGH</h2>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#140087]">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#FFAE00]">
               MANAGEMENT QUOTA
             </h2>
           </div>

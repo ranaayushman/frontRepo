@@ -35,14 +35,21 @@ const WhyHIT = () => {
         {/* Text Content */}
         <div className="flex-1 text-left">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8">
-            Why Choose HIT?
+            Why Choose US?
           </h2>
           <div className="bg-[#110072] text-white p-8 md:p-10 rounded-2xl shadow-xl text-lg md:text-xl font-semibold leading-relaxed max-w-lg">
-            <p>Quick stats: Rankings, Placement %,</p>
-            <p>Top Recruiters</p>
+            <p>
+              98% success rate in helping students secure top college
+              admissions.
+            </p>
+            <p>
+              Personalized guidance, expert counsellors, and end-to-end support.
+            </p>
             <p className="mt-4">
-              Trust badges: <span className="font-bold">AICTE Approved</span>,{" "}
-              <span className="font-bold">NAAC Accredited</span>
+              Trusted by thousands:{" "}
+              <span className="font-bold">AICTE Guidance Expertise</span>,{" "}
+              <span className="font-bold">NAAC Insights</span>,{" "}
+              <span className="font-bold">100+ Partner Colleges</span>
             </p>
           </div>
         </div>
@@ -52,4 +59,3 @@ const WhyHIT = () => {
 };
 
 export default WhyHIT;
-  
