@@ -41,9 +41,20 @@ const LoginPage = () => {
   return (
     <div
       className="w-full min-h-screen bg-cover bg-center flex items-center justify-center px-4"
-      style={{ backgroundImage: "url('/img/heritage.png')" }}
+      style={{ backgroundImage: "url('/img/login_image.jpeg')" }}
     >
-      
+      <div className="hidden md:flex items-center justify-center px-4 bg-transparent">
+        <h1
+          className="text-4xl md:text-6xl font-bold text-transparent rotate-180"
+          style={{
+            writingMode: "vertical-rl",
+            WebkitTextStroke: "2px #ffffff",
+            color: "transparent",
+          }}
+        >
+          namankan.in
+        </h1>
+      </div>
       <div className="bg-white rounded-3xl shadow-xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden border-none">
         {/* Login Section */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
@@ -103,7 +114,7 @@ const LoginPage = () => {
           {/* Background for glassmorphism effect */}
           <div
             className="absolute inset-0 bg-cover bg-center blur-sm opacity-50"
-            style={{ backgroundImage: "url('/img/heritage.png')" }}
+            style={{ backgroundImage: "url('/img/login_image.jpeg')" }}
           ></div>
 
           {/* Glassmorphism content */}
