@@ -76,8 +76,8 @@ function Sidebar() {
     },
     {
       icon: <MessageSquare className="h-5 w-5" />,
-      label: "Messages",
-      href: "/messages",
+      label: "Notices",
+      href: "/admin/notice",
     },
     {
       icon: <Settings className="h-5 w-5" />,
