@@ -97,3 +97,52 @@ export async function GET() {
     );
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    await connectDB();
+    const body = await req.json();
+    const { id }: { id: string } = body;
+
+    // Validate input
+    if (!id || typeof id !== "string" || !id.trim()) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Application ID is required and must be a non-empty string",
+        },
+        { status: 400 }
+      );
+    }
+
+    const deletedApplication = await Apply.findByIdAndDelete(id);
+
+    if (!deletedApplication) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Application not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Application deleted successfully",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting application:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      },
+      { status: 500 }
+    );
+  }
+}
