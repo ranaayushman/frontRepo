@@ -20,6 +20,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 interface Application {
   _id: string;
@@ -40,29 +42,50 @@ interface Application {
   userId?: string;
 }
 
-// type ApplicationStatus = "Pending" | "In Review" | "Completed";
-
 const UsersPage = () => {
   const router = useRouter();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   // Fetch applications on mount
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const res = await fetch("/api/v1/apply");
-        const data = await res.json();
+        const token = Cookies.get("token");
+        if (!token) {
+          setError("Please log in to view applications");
+          router.push("/login?redirect=/admin/dashboard");
+          return;
+        }
+
+        const response = await axios.get("/api/v1/apply", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = response.data;
         if (data.success && data.data) {
           setApplications(data.data);
         } else {
           setError(data.message || "Failed to fetch applications");
           setApplications([]);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Failed to fetch applications:", err);
-        setError("An error occurred while fetching applications");
+        if (err.response?.status === 401) {
+          setError("Session expired. Please log in again.");
+          router.push("/login?redirect=/admin/dashboard");
+        } else if (err.response?.status === 403) {
+          setError("Access denied. Admin privileges required.");
+        } else {
+          setError(
+            err.response?.data?.message ||
+              "An error occurred while fetching applications"
+          );
+        }
         setApplications([]);
       } finally {
         setLoading(false);
@@ -70,13 +93,58 @@ const UsersPage = () => {
     };
 
     fetchApplications();
-  }, []);
+  }, [router]);
 
-//   const getApplicationStatus = (app: Application): ApplicationStatus => {
-//     if (app.aadharCardURL && app.class12MarkSheetURL) return "Completed";
-//     if (app.class12marks) return "In Review";
-//     return "Pending";
-//   };
+  // Handle application deletion
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this application?")) {
+      return;
+    }
+
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        setError("Please log in to perform this action");
+        router.push("/login?redirect=/admin/dashboard");
+        return;
+      }
+
+      const response = await axios.delete("/api/v1/apply", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: { id }, // Send id in request body
+      });
+
+      const data = response.data;
+      if (data.success) {
+        setApplications((prev) => prev.filter((app) => app._id !== id));
+        setSuccess("Application deleted successfully");
+        setError(null);
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        setError(data.message || "Failed to delete application");
+        setSuccess(null);
+      }
+    } catch (err: any) {
+      console.error("Failed to delete application:", err);
+      if (err.response?.status === 401) {
+        setError("Session expired. Please log in again.");
+        router.push("/login?redirect=/admin/dashboard");
+      } else if (err.response?.status === 403) {
+        setError("Access denied. Admin privileges required.");
+      } else if (err.response?.status === 404) {
+        setError("Application not found.");
+      } else {
+        setError(
+          err.response?.data?.message ||
+            "An error occurred while deleting the application"
+        );
+      }
+      setSuccess(null);
+    }
+  };
 
   const getApplicationDate = (id: string) => {
     const timestamp = parseInt(id.substring(0, 8), 16) * 1000;
@@ -117,6 +185,13 @@ const UsersPage = () => {
                 </AlertDescription>
               </Alert>
             )}
+            {success && (
+              <Alert className="mb-4 bg-green-50 border-green-200">
+                <AlertDescription className="text-green-700">
+                  {success}
+                </AlertDescription>
+              </Alert>
+            )}
 
             {applications.length === 0 && !error ? (
               <div className="text-center py-10 text-gray-500">
@@ -134,9 +209,8 @@ const UsersPage = () => {
                       <TableHead>Class 12 Marks</TableHead>
                       <TableHead>State</TableHead>
                       <TableHead>City</TableHead>
-                      {/* <TableHead>Status</TableHead> */}
                       <TableHead>Applied On</TableHead>
-                      {/* <TableHead>Actions</TableHead> */}
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -151,31 +225,16 @@ const UsersPage = () => {
                         <TableCell>{app.class12marks || "N/A"}</TableCell>
                         <TableCell>{app.state || "N/A"}</TableCell>
                         <TableCell>{app.city || "N/A"}</TableCell>
-                        {/* <TableCell>
-                          <Badge
-                            variant={
-                              getApplicationStatus(app) === "In Review"
-                                ? "outline"
-                                : getApplicationStatus(app) === "Pending"
-                                ? "secondary"
-                                : "default"
-                            }
-                          >
-                            {getApplicationStatus(app)}
-                          </Badge>
-                        </TableCell> */}
                         <TableCell>{getApplicationDate(app._id)}</TableCell>
-                        {/* <TableCell>
+                        <TableCell>
                           <Button
-                            variant="outline"
+                            variant="destructive"
                             size="sm"
-                            onClick={() =>
-                              router.push(`/admin/application-details/${app._id}`)
-                            }
+                            onClick={() => handleDelete(app._id)}
                           >
-                            View Details
+                            Delete
                           </Button>
-                        </TableCell> */}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

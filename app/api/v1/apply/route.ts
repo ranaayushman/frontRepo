@@ -1,15 +1,41 @@
 import { NextResponse } from "next/server";
 import Apply from "@/app/models/apply.model";
+import User from "@/app/models/user.model"; // Adjust path to your User model
 import { connectDB } from "@/lib/db";
+import jwt from "jsonwebtoken";
+
+// Middleware to verify JWT and extract user
+const verifyToken = (req: Request) => {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    throw new Error("Unauthorized: No token provided");
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "your-secret-key"
+    ) as {
+      userId: string;
+      role: string;
+    };
+    return decoded;
+  } catch (error) {
+    throw new Error("Unauthorized: Invalid token");
+  }
+};
 
 // POST - Create new application
 export async function POST(req: Request) {
   try {
     await connectDB();
 
+    // Verify token and get user
+    const { userId, role } = verifyToken(req);
+
     const body = await req.json();
     const {
-      // userId,
       collegeId,
       branchId,
       name,
@@ -26,9 +52,19 @@ export async function POST(req: Request) {
       pinCode,
     } = body;
 
-    // Ensure lateralEntry is stored as a boolean
+    // Validate userId (ensure it matches token)
+    // Note: Frontend sends userId, but we use token's userId for security
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    // Create new application
     const newApplication = new Apply({
-      // userId: userId || undefined,
+      userId, // Use token's userId
       name,
       collegeId,
       branchId,
@@ -39,7 +75,7 @@ export async function POST(req: Request) {
       class12marks,
       address,
       passingYear,
-      lateralEntry: Boolean(lateralEntry), // Convert to boolean explicitly
+      lateralEntry: Boolean(lateralEntry),
       state,
       city,
       pinCode,
@@ -66,15 +102,29 @@ export async function POST(req: Request) {
         message:
           error instanceof Error ? error.message : "Unknown error occurred",
       },
-      { status: 500 }
+      {
+        status:
+          error instanceof Error && error.message.includes("Unauthorized")
+            ? 401
+            : 500,
+      }
     );
   }
 }
 
-// GET - Fetch all applications (for admin)
-export async function GET() {
+// GET - Fetch all applications (admin only)
+export async function GET(req: Request) {
   try {
     await connectDB();
+
+    // Verify token and check role
+    const { userId, role } = verifyToken(req);
+    if (role !== "admin") {
+      return NextResponse.json(
+        { success: false, message: "Forbidden: Admin access required" },
+        { status: 403 }
+      );
+    }
 
     const applications = await Apply.find().sort({ createdAt: -1 });
 
@@ -93,14 +143,24 @@ export async function GET() {
         message:
           error instanceof Error ? error.message : "Unknown error occurred",
       },
-      { status: 500 }
+      {
+        status:
+          error instanceof Error && error.message.includes("Unauthorized")
+            ? 401
+            : 500,
+      }
     );
   }
 }
 
+// DELETE - Delete an application
 export async function DELETE(req: Request) {
   try {
     await connectDB();
+
+    // Verify token (optional: restrict to admin or application owner)
+    const { userId, role } = verifyToken(req);
+
     const body = await req.json();
     const { id }: { id: string } = body;
 
@@ -115,17 +175,25 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const deletedApplication = await Apply.findByIdAndDelete(id);
-
-    if (!deletedApplication) {
+    // Optional: Restrict deletion to admins or application owner
+    const application = await Apply.findById(id);
+    if (!application) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Application not found",
-        },
+        { success: false, message: "Application not found" },
         { status: 404 }
       );
     }
+    if (role !== "admin" && application.userId.toString() !== userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Forbidden: Cannot delete this application",
+        },
+        { status: 403 }
+      );
+    }
+
+    await Apply.findByIdAndDelete(id);
 
     return NextResponse.json(
       {
@@ -142,7 +210,12 @@ export async function DELETE(req: Request) {
         message:
           error instanceof Error ? error.message : "Unknown error occurred",
       },
-      { status: 500 }
+      {
+        status:
+          error instanceof Error && error.message.includes("Unauthorized")
+            ? 401
+            : 500,
+      }
     );
   }
 }
