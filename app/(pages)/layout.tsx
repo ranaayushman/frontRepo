@@ -13,7 +13,7 @@ export default function RootLayout({
   return (
     <div>
       <Navbar />
-      <NoticesMarquee />
+      {/* <NoticesMarquee /> */}
       {children}
       <Footer />
     </div>
