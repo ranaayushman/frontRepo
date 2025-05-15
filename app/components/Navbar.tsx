@@ -14,33 +14,26 @@ const Navbar: React.FC = () => {
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const router = useRouter();
 
-  // Handle scroll event to adjust navbar transparency
+  // Handle scroll event for navbar transparency
   useEffect(() => {
     const handleScroll = () => {
       setScrollPosition(window.scrollY);
     };
-
-    // Add scroll event listener
     window.addEventListener("scroll", handleScroll);
-
-    // Clean up event listener
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Handle navigating to application page
   const handleAdmissionNavigation = () => {
     router.push("/apply");
   };
 
   return (
     <nav
-      className={`absolute top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 transition-all duration-300 bg-gradient-to-b from-white via-white/70 to-transparent backdrop-blur-xs`}
+      className="absolute top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 transition-all duration-300 bg-gradient-to-b from-white via-white/70 to-transparent backdrop-blur-xs"
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
@@ -80,6 +73,12 @@ const Navbar: React.FC = () => {
           >
             CONTACT US
           </button>
+          <Link
+            href="/login"
+            className="text-white px-4 py-1 bg-[#140087] rounded-lg font-semibold text-lg hover:bg-[#140060] transition-colors"
+          >
+            Login
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -90,11 +89,7 @@ const Navbar: React.FC = () => {
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
-          {isMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
+          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </Button>
       </div>
 

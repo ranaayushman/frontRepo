@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Notices from "@/app/models/notice.model";
-import User from "@/app/models/user.model"; // Adjust path to your User model
+import User from "@/app/models/user.model";
 import jwt from "jsonwebtoken";
 
 // Middleware to verify JWT and extract user (returns null if no valid token)
@@ -51,6 +51,19 @@ export async function GET(req: NextRequest) {
       notices = await Notices.find({ isPublished: true }).sort({
         createdAt: -1,
       });
+    }
+
+    // Check for duplicate _id values (for robustness)
+    const noticeIds = notices.map((notice) => notice._id.toString());
+    const uniqueNoticeIds = new Set(noticeIds);
+    if (noticeIds.length !== uniqueNoticeIds.size) {
+      console.warn("Duplicate notice IDs detected:", noticeIds);
+      // Remove duplicates by converting to Map and back to array
+      notices = Array.from(
+        new Map(
+          notices.map((notice) => [notice._id.toString(), notice])
+        ).values()
+      );
     }
 
     return NextResponse.json(
@@ -133,7 +146,7 @@ export async function POST(req: NextRequest) {
     const notice = await Notices.create({
       title: title.trim(),
       description: description.trim(),
-      isPublished: isPublished ?? false, // Schema default applies, but explicit for clarity
+      isPublished: isPublished ?? false,
       date: new Date(),
     });
 
