@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 interface Branch {
   _id: string;
@@ -37,21 +38,51 @@ export const useApplyForm = (userId: string) => {
   const [colleges, setColleges] = useState<College[]>([]);
   const [selectedCollegeId, setSelectedCollegeId] = useState<string>("");
 
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    guardianNumber: "",
-    email: "",
-    phoneNumber: "",
-    collegeId: "",
-    branchId: "",
-    class12marks: "",
-    address: "",
-    state: "",
-    city: "",
-    pinCode: "",
-    passingYear: "",
-    lateralEntry: false,
+  // Initialize form data from local storage if available
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (typeof window !== "undefined") {
+      const savedData = localStorage.getItem("applyFormData");
+      return savedData
+        ? JSON.parse(savedData)
+        : {
+            name: "",
+            guardianNumber: "",
+            email: "",
+            phoneNumber: "",
+            collegeId: "",
+            branchId: "",
+            class12marks: "",
+            address: "",
+            state: "",
+            city: "",
+            pinCode: "",
+            passingYear: "",
+            lateralEntry: false,
+          };
+    }
+    return {
+      name: "",
+      guardianNumber: "",
+      email: "",
+      phoneNumber: "",
+      collegeId: "",
+      branchId: "",
+      class12marks: "",
+      address: "",
+      state: "",
+      city: "",
+      pinCode: "",
+      passingYear: "",
+      lateralEntry: false,
+    };
   });
+
+  // Save form data to local storage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("applyFormData", JSON.stringify(formData));
+    }
+  }, [formData]);
 
   // List of Indian states
   const indianStates = [
@@ -121,7 +152,6 @@ export const useApplyForm = (userId: string) => {
     setErrorMessage("");
   };
 
-  // Handle Select change
   const handleSelectChange = (value: string, name: keyof FormData) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (name === "collegeId") {
@@ -131,7 +161,6 @@ export const useApplyForm = (userId: string) => {
     setErrorMessage("");
   };
 
-  // Reset form
   const resetForm = () => {
     setFormData({
       name: "",
@@ -149,9 +178,12 @@ export const useApplyForm = (userId: string) => {
       lateralEntry: false,
     });
     setSelectedCollegeId("");
+    // Clear local storage
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("applyFormData");
+    }
   };
 
-  // Validate form
   const validateForm = () => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setErrorMessage("Invalid email format");
@@ -187,6 +219,16 @@ export const useApplyForm = (userId: string) => {
     setSuccessMessage("");
 
     try {
+      // Check authentication via cookie
+      const token = Cookies.get("token");
+      console.log("Token:", token); // Debug: Check if token is retrieved
+      console.log("UserId:", userId); // Debug: Check if userId is present
+
+      if (!userId || !token) {
+        throw new Error("UNAUTHENTICATED");
+      }
+
+      // Proceed with form submission, including token in headers
       const response = await axios.post("/api/v1/apply", {
         userId: userId || null,
         name: formData.name,
@@ -202,6 +244,8 @@ export const useApplyForm = (userId: string) => {
         city: formData.city,
         passingYear: formData.passingYear,
         lateralEntry: formData.lateralEntry,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.data.success) {
@@ -212,8 +256,11 @@ export const useApplyForm = (userId: string) => {
           response.data.message || "Failed to submit application"
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submission error:", error);
+      if (error.message === "UNAUTHENTICATED") {
+        throw error; // Let ApplyPage handle the redirect
+      }
       let message = "Something went wrong. Please try again.";
       if (axios.isAxiosError(error) && error.response) {
         message = error.response.data?.message || message;

@@ -1,12 +1,15 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Apply } from "./Apply";
 import { useApplyForm } from "./useApplyForm";
+import Cookies from "js-cookie";
 
 const ApplyPage = () => {
   const params = useParams();
-  const userId = params?.userId?.toString() || "";
+  const router = useRouter();
+  // Prefer userId from cookie, fallback to params
+  const userId = Cookies.get("userId") || params?.userId?.toString() || "";
 
   const {
     formData,
@@ -21,6 +24,19 @@ const ApplyPage = () => {
     handleSubmit,
   } = useApplyForm(userId);
 
+  // Wrap handleSubmit to catch UNAUTHENTICATED error and redirect
+  const wrappedHandleSubmit = async (e: React.FormEvent) => {
+    try {
+      await handleSubmit(e);
+    } catch (error: any) {
+      if (error.message === "UNAUTHENTICATED") {
+        // Save current URL for redirect after login
+        const redirectUrl = encodeURIComponent(`/apply/${userId}`);
+        router.push(`/login?redirect=${redirectUrl}`);
+      }
+    }
+  };
+
   return (
     <Apply
       formData={formData}
@@ -32,7 +48,7 @@ const ApplyPage = () => {
       indianStates={indianStates}
       handleChange={handleChange}
       handleSelectChange={handleSelectChange}
-      handleSubmit={handleSubmit}
+      handleSubmit={wrappedHandleSubmit}
     />
   );
 };

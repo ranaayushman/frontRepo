@@ -1,17 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 
-const LoginPage = () => {
+// Inner component to use useSearchParams
+const LoginContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/admin/dashboard";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,17 +23,22 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const res = await axios.post("api/v1/login", {
+      const res = await axios.post("/api/v1/login", {
         email,
         password,
       });
 
       const { token, user } = res.data;
 
+      // Clear applyFormData to prevent data leakage
+      localStorage.removeItem("applyFormData");
+
       Cookies.set("token", token, { expires: 7 });
       Cookies.set("role", user.role, { expires: 7 });
+      Cookies.set("userId", user.id, { expires: 7 });
 
-      router.push("/admin/dashboard");
+      // Redirect to the URL from the redirect query parameter or fallback
+      router.push(decodeURIComponent(redirectUrl));
     } catch (err: any) {
       console.error(err);
       setError(err?.response?.data?.message || "Login failed");
@@ -139,6 +146,15 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+// Wrap LoginContent in Suspense
+const LoginPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 };
 
